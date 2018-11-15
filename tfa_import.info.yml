@@ -1,0 +1,8 @@
+name: 'TFA Import'
+type: module
+description: 'Import posts from a JSON data source as Drupal entities.'
+package: Jamespackage
+core: 8.x
+dependencies:
+  - node
+  - block

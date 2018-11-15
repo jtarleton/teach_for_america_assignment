@@ -1,0 +1,70 @@
+<?php 
+
+/**
+ * Implementing hook_menu().
+ *
+function hellos_menu() {
+  // The paths given here need to match the ones in example.routing.yml exactly.
+  $items['hellos/hello_page'] = array(
+    'title' => 'First page',
+    'description' => 'This is a example page.',
+    // The name of the route from example.routing.yml
+    'route' => 'hellos.hellos_page',
+  );
+  return $items;
+}
+*/
+
+
+
+
+$posts_url = 'https://jsonplaceholder.typicode.com/posts';
+file_get_contents($posts_url);
+
+$users_url = 'https://jsonplaceholder.typicode.com/users';
+file_get_contents($users_url);
+
+
+use Drupal\user\Entity\User;
+use Drupal\node\Entity\Node;
+
+function hellos_create_node() {
+        $tempstore = \Drupal::service('user.private_tempstore')->get('hellos');
+        $some_data = $tempstore->get('my_variable_name');
+	$posts = json_decode(file_get_contents($some_data), true);
+	
+	$users_url = 'https://jsonplaceholder.typicode.com/users';
+	$users = json_decode(file_get_contents($users_url), true);
+	$feedback = '';
+	//let every other title use bold tag
+	$i = 0;
+	foreach($posts as $post) {
+	  $i++;
+	  $node_entity_bundle = array(
+
+		'type' => 'article',
+		'created' => REQUEST_TIME,
+		'changed' => REQUEST_TIME,
+		'uid' => $post['userId'],
+		'title' => ($i%2 > 0) ? '&lt;b&gt;' . $post['title'] . '&lt;/b&gt;' : $post['title'],
+		'body' => $post['body']
+ 	  );
+
+	  $node = Node::create($node_entity_bundle);
+
+	  $node->save();
+	  $slug = str_replace(' ', '-', $post['title']);
+	  $alias = sprintf('/hellos/%s', $slug);
+	  \Drupal::service('path.alias_storage')->save(sprintf('/node/%s', $node->id()), $alias, 'en');
+
+	  $feedback .= sprintf('<li>Created node %s</li>', sprintf('<a href="%s">%s</a>', $alias,  $node->get('title')->value));
+	}
+	return t($feedback);
+}
+
+
+
+
+
+
+
