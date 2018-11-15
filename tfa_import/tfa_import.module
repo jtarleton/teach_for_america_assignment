@@ -28,7 +28,7 @@ function tfa_import_create_node() {
 
 	  $node->save();
 	  $slug = str_replace(' ', '-', $post['title']);
-	  $alias = sprintf('/hellos/%s', $slug);
+	  $alias = sprintf('/tfa_import/%s', $slug);
 	  \Drupal::service('path.alias_storage')->save(sprintf('/node/%s', $node->id()), $alias, 'en');
 
 	  $feedback .= sprintf('<li>Created node %s</li>', sprintf('<a href="%s">%s</a>', $alias,  $node->get('title')->value));
