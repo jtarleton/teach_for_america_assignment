@@ -1,30 +1,4 @@
 <?php 
-
-/**
- * Implementing hook_menu().
- *
-function hellos_menu() {
-  // The paths given here need to match the ones in example.routing.yml exactly.
-  $items['hellos/hello_page'] = array(
-    'title' => 'First page',
-    'description' => 'This is a example page.',
-    // The name of the route from example.routing.yml
-    'route' => 'hellos.hellos_page',
-  );
-  return $items;
-}
-*/
-
-
-
-
-$posts_url = 'https://jsonplaceholder.typicode.com/posts';
-file_get_contents($posts_url);
-
-$users_url = 'https://jsonplaceholder.typicode.com/users';
-file_get_contents($users_url);
-
-
 use Drupal\user\Entity\User;
 use Drupal\node\Entity\Node;
 
