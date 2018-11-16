@@ -12,29 +12,27 @@ class TfaImportController {
     return new static($container->get('module_handler'));
   }
 
-  // public welcome page callback.
+  // public welcome page callback
   public function welcome() {
-
-	//drupal_set_message( t('You submitted %source', array('%source' => $source)));
-	//$tempstore = \Drupal::service('user.private_tempstore')->get('tfa_import');
-	//$some_data = $tempstore->get('my_variable_name');
-
-	$var = \Drupal::request()->query->get('q');
-
     $build = array(
       '#type' => 'markup',
-      '#markup' => t('Welcome! ' . $var),
+      '#markup' => t('Teach for America Import Utility'),
     );
     return $build;
   }
 
   // Create node page callback
   public function create_node() {
-
-	//$posts_source_url = $request->query->get('posts_source');
 	$output = array(
 		'#markup' => tfa_import_create_node()
 	);
   	return $output;
+  }
+  // create user page callback
+  public function create_user() {
+  	$output = array(
+		'#markup' => tfa_import_create_user()
+	);
+	return $output;
   }
 }
