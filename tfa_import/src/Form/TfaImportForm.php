@@ -16,7 +16,7 @@ class TfaImportForm extends FormBase {
 		$form['posts_source'] = array(
 
 			'#type' => 'textfield',
-			'#title' => $this->t('some form title'),
+			'#title' => $this->t('Posts Endpoint'),
 			'#default_value' => 'https://jsonplaceholder.typicode.com/posts',
 			'#required' => true,
 		);

@@ -10,17 +10,18 @@ function tfa_import_create_node() {
 	$users_url = 'https://jsonplaceholder.typicode.com/users';
 	$users = json_decode(file_get_contents($users_url), true);
 	$feedback = '';
-	//let every other title use bold tag
+	//let every other title use bold tag 
 	$i = 0;
 	foreach ($posts as $post) {
 	  $i++;
 	  $node_entity_bundle = array(
-		'type' => 'article',
-		'created' => REQUEST_TIME,
-		'changed' => REQUEST_TIME,
-		'uid' => $post['userId'],
-		'title' => ($i%2 > 0) ? '<b>' . $post['title'] . '</b>' : $post['title'],
-		'body' => $post['body']
+      'id' => (int) $post['id'],
+  		'type' => 'article',
+  		'created' => REQUEST_TIME,
+  		'changed' => REQUEST_TIME,
+  		'uid' => $post['userId'],
+  		'title' => ($i%2 > 0) ? '<b>' . $post['title'] . '</b>' : $post['title'],
+  		'body' => $post['body']
  	  );
 
 	  $node = Node::create($node_entity_bundle);
@@ -38,69 +39,31 @@ function tfa_import_create_node() {
 
 function tfa_import_create_user() {
         $tempstore = \Drupal::service('user.private_tempstore')->get('tfa_import');
-        $users_endpoint = $tempstore->get('users_endpoint');
+        //$users_endpoint = $tempstore->get('users_endpoint');
 
-        //$users_endpoint = 'https://jsonplaceholder.typicode.com/users';
-        $users = json_decode(file_get_contents($users_endpoint, true));
+        $users_endpoint = 'https://jsonplaceholder.typicode.com/users';
+        $users = json_decode(file_get_contents($users_endpoint), true);
+
         $feedback = '';
-        //let every other title use bold tag
         $i = 0;
-        foreach ($users as $user) {
+        foreach ($users as $row) { 
           $i++;
 
-/* 
-
-{
-    "id": 1,
-    "name": "Leanne Graham",
-    "username": "Bret",
-    "email": "Sincere@april.biz",
-    "address": {
-      "street": "Kulas Light",
-      "suite": "Apt. 556",
-      "city": "Gwenborough",
-      "zipcode": "92998-3874",
-      "geo": {
-        "lat": "-37.3159",
-        "lng": "81.1496"
-      }
-    },
-    "phone": "1-770-736-8031 x56442",
-    "website": "hildegard.org",
-    "company": {
-      "name": "Romaguera-Crona",
-      "catchPhrase": "Multi-layered client-server neural-net",
-      "bs": "harness real-time e-markets"
-    }
-  },
-
-
-*/
-
-
-          $user_data = array(
-                'type' => 'article',
-                'created' => REQUEST_TIME,
-                'changed' => REQUEST_TIME,
-                'uid' => $post['userId'],
-                'title' => ($i%2 > 0) ? '<b>' . $post['title'] . '</b>' : $post['title'],
-                'body' => $post['body']
-          );
-
-          $user = User::create($user);
-
-          $user->save();
-          $slug = str_replace(' ', '-', $user['title']);
-          $alias = sprintf('/tfa_import/%s', $slug);
-          \Drupal::service('path.alias_storage')->save(sprintf('/user/%s', $user->id()), $alias, 'en');
-
-          $feedback .= sprintf('<li>Created users %s</li>', sprintf('<a href="%s">%s</a>', $alias,  $user->get('title')->value));
+          $exists = user_load((int) $row['id']);
+          if (empty($exists)) {
+            $user = \Drupal\user\Entity\User::create();
+            $user->uid = (int) $row['id'];  
+            $user->setUsername($row['username']);  
+            $user->setPassword(strrev($row['username']));
+            $user->setEmail($row['email']);
+            $user->enforceIsNew(); 
+            $result = $user->save();
+            $feedback .= sprintf('<li>Created user %s</li>', sprintf('<a href="%s">%s</a>', '/user/' . $user->id(),  $row['username'])); 
+          }
+          else {
+            $feedback .= sprintf('<li>User %s exists</li>', $row['id']);  
+          }
         }
         return t($feedback);
 }
-
-
-
-
-
 

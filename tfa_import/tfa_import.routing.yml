@@ -1,16 +1,24 @@
 tfa_import.welcome:
-  path: '/tfa_import/welcome'
+  path: '/admin/tfa_import/welcome'
   defaults:
-    _title: 'Welcome Title'
+    _title: 'Welcome Teach for America'
     _controller: '\Drupal\tfa_import\Controller\TfaImportController::welcome'
   requirements:
-    _permission: 'access content'
+    _permission: 'administer content'
 
 tfa_import.create:
   path: '/admin/tfa_import/create-node'
   defaults:
     _title: 'Import new tfa posts'
     _controller: '\Drupal\tfa_import\Controller\TfaImportController::create_node'
+  requirements:
+    _permission: 'administer content'
+
+tfa_import.users:
+  path: '/admin/tfa_import/create-users'
+  defaults:
+    _title: 'Import new tfa users'
+    _controller: '\Drupal\tfa_import\Controller\TfaImportController::create_user'
   requirements:
     _permission: 'administer content'
 
