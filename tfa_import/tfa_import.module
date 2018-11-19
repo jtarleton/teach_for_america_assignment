@@ -24,15 +24,29 @@ function tfa_import_create_node() {
   		'body' => $post['body']
  	  );
 
-	  $node = Node::create($node_entity_bundle);
+    // Check node does not already exist.
+    $node_exists = false;
+    $query = \Drupal::entityQuery('node')
+              ->condition('title', $post['title'],'CONTAINS');
+    $entity = $query->execute();
+    $key = array_keys($entity);
 
-	  $node->save();
-	  $slug = str_replace(' ', '-', $post['title']);
-	  $alias = sprintf('/tfa_import/%s', $slug);
-	  \Drupal::service('path.alias_storage')->save(sprintf('/node/%s', $node->id()), $alias, 'en');
+    // If the node exists, assign node ID to $node_exists, otherwise assign FALSE.
+    $node_exists = !empty($key[0]) ? : false;
 
-	  $feedback .= sprintf('<li>Created node %s</li>', sprintf('<a href="%s">%s</a>', $alias,  $node->get('title')->value));
-	}
+    if (!$node_exists) {
+  	  $node = Node::create($node_entity_bundle);
+  	  $node->save();
+  	  $slug = str_replace(' ', '-', $post['title']);
+  	  $alias = sprintf('/tfa_import/%s', $slug);
+  	  \Drupal::service('path.alias_storage')->save(sprintf('/node/%s', $node->id()), $alias, 'en');
+
+  	  $feedback .= sprintf('<li>Created node %s.</li>', sprintf('<a href="%s">%s</a>', $alias,  $node->get('title')->value));
+    }
+    else {  
+      $feedback .= sprintf('<li>Node %s exists.</li>', $node->get('title')->value);
+    }
+  }
 	return t($feedback);
 }
 
